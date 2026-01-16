@@ -29,8 +29,8 @@ vector_db:
 
 # RAG Settings
 rag:
-  top_k: 5  # Number of chunks to retrieve
-  similarity_threshold: 0.3  # Minimum similarity score
+  top_k: 8  # Number of chunks to retrieve (increased for better coverage)
+  similarity_threshold: 0.2  # Minimum similarity score (lowered to get more relevant results)
   max_context_length: 4000  # Max characters in context
 
 # LLM Settings

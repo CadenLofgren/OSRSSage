@@ -78,9 +78,24 @@ class RAGSystem:
     
     def retrieve(self, query: str) -> List[Dict]:
         """Retrieve relevant chunks for a query."""
-        # Create query embedding
+        # Expand query with synonyms/related terms for better retrieval
+        # This helps with queries like "training guide" finding "guide", "training methods", etc.
+        query_lower = query.lower()
+        expanded_query = query
+        
+        # Add OSRS-specific context to improve skill-related queries
+        if any(term in query_lower for term in ['training', 'train', 'guide', 'how to', 'level']):
+            if 'attack' in query_lower:
+                expanded_query = f"{query} OSRS Attack skill training methods guide"
+            elif any(skill in query_lower for skill in ['strength', 'defence', 'defense', 'ranged', 'magic', 'prayer']):
+                skill_name = [s for s in ['strength', 'defence', 'defense', 'ranged', 'magic', 'prayer'] if s in query_lower][0]
+                expanded_query = f"{query} OSRS {skill_name} skill training methods guide"
+            else:
+                expanded_query = f"{query} OSRS training guide methods"
+        
+        # Create query embedding using expanded query
         query_embedding = self.embedding_model.encode(
-            query,
+            expanded_query,
             convert_to_numpy=True,
             normalize_embeddings=True
         ).tolist()

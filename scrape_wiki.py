@@ -104,8 +104,8 @@ class OSRSWikiScraper:
             logger.info(f"Found {len(pages)} pages in {category}")
             time.sleep(1)
         
-        # Also get some popular pages
-        logger.info("Fetching additional popular pages...")
+        # Also get some popular pages and skill training guides
+        logger.info("Fetching additional popular pages and skill training guides...")
         popular_pages = [
             "Main Page",
             "Grand Exchange",
@@ -119,6 +119,59 @@ class OSRSWikiScraper:
             "Magic"
         ]
         all_pages.update(popular_pages)
+        
+        # Add skill training guide pages (critical for answering training questions)
+        skill_guides = [
+            "Attack/Guide",
+            "Strength/Guide",
+            "Defence/Guide",
+            "Ranged/Guide",
+            "Prayer/Guide",
+            "Magic/Guide",
+            "Runecraft/Guide",
+            "Construction/Guide",
+            "Hitpoints/Guide",
+            "Agility/Guide",
+            "Herblore/Guide",
+            "Thieving/Guide",
+            "Crafting/Guide",
+            "Fletching/Guide",
+            "Slayer/Guide",
+            "Hunter/Guide",
+            "Mining/Guide",
+            "Smithing/Guide",
+            "Fishing/Guide",
+            "Cooking/Guide",
+            "Firemaking/Guide",
+            "Woodcutting/Guide",
+            "Farming/Guide",
+            # Also add the main skill pages
+            "Attack",
+            "Strength",
+            "Defence",
+            "Ranged",
+            "Prayer",
+            "Magic",
+            "Runecraft",
+            "Construction",
+            "Hitpoints",
+            "Agility",
+            "Herblore",
+            "Thieving",
+            "Crafting",
+            "Fletching",
+            "Slayer",
+            "Hunter",
+            "Mining",
+            "Smithing",
+            "Fishing",
+            "Cooking",
+            "Firemaking",
+            "Woodcutting",
+            "Farming"
+        ]
+        all_pages.update(skill_guides)
+        logger.info(f"Added {len(skill_guides)} skill pages and training guides")
         
         max_pages = self.config['wiki'].get('max_pages')
         if max_pages:
