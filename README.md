@@ -4,13 +4,13 @@ A local Retrieval-Augmented Generation (RAG) system for querying the Old School 
 
 ## Features
 
-- 🔍 **Wiki Scraping**: Automated scraping of OSRS wiki pages with structured data extraction
-- 🧠 **Intelligent Chunking**: Preserves related information together (item stats, quest requirements, etc.)
-- 📊 **Vector Database**: Uses Chroma for fast similarity search
-- 🤖 **Local LLM**: Uses Ollama with Qwen 2.5 14B for generation (optimized for RTX 4080)
-- 💬 **Dual Interfaces**: Both CLI and Streamlit web UI
-- ⚡ **Fast Retrieval**: Optimized for speed with top-k retrieval
-- 🛡️ **Security Features**:
+- **Wiki Scraping**: Automated scraping of OSRS wiki pages with structured data extraction
+- **Intelligent Chunking**: Preserves related information together (item stats, quest requirements, etc.)
+- **Vector Database**: Uses Chroma for fast similarity search
+- **Local LLM**: Uses Ollama with Qwen 2.5 14B for generation (optimized for RTX 4080)
+- **Dual Interfaces**: Both CLI and Streamlit web UI
+- **Fast Retrieval**: Optimized for speed with top-k retrieval
+- **Security Features**:
   - Input validation and sanitization
   - Rate limiting (max 1 query per 2 seconds)
   - Prompt injection prevention
