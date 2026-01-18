@@ -7,6 +7,7 @@ import os
 import json
 import time
 import logging
+import re
 from pathlib import Path
 from typing import List, Dict, Optional
 from urllib.parse import urljoin, urlparse
@@ -43,7 +44,37 @@ class OSRSWikiScraper:
         
         self.scraped_urls = set()
         self.pages_data = []
+    
+    def sanitize_filename(self, filename: str) -> str:
+        """Sanitize filename for Windows compatibility.
         
+        Removes or replaces characters that are invalid in Windows filenames:
+        < > : " / \ | ? *
+        """
+        # Replace path separators
+        filename = filename.replace('/', '_').replace('\\', '_')
+        
+        # Remove invalid Windows filename characters
+        invalid_chars = '<>:"|?*'
+        for char in invalid_chars:
+            filename = filename.replace(char, '_')
+        
+        # Remove leading/trailing spaces and dots (Windows doesn't allow these)
+        filename = filename.strip(' .')
+        
+        # Remove consecutive underscores
+        filename = re.sub(r'_+', '_', filename)
+        
+        # Windows has max 255 characters for filename
+        if len(filename) > 200:  # Leave room for .json extension
+            filename = filename[:200]
+        
+        # Ensure it's not empty
+        if not filename:
+            filename = "unnamed_page"
+        
+        return filename
+    
     def get_wiki_api_url(self, **params) -> str:
         """Construct MediaWiki API URL."""
         api_url = urljoin(self.base_url, "/api.php")
@@ -52,8 +83,13 @@ class OSRSWikiScraper:
         params['format'] = 'json'
         return f"{api_url}?{urlencode(params)}"
     
-    def get_category_pages(self, category: str, limit: int = 500) -> List[str]:
-        """Get all pages in a category."""
+    def get_category_pages(self, category: str, limit: Optional[int] = None) -> List[str]:
+        """Get all pages in a category.
+        
+        Args:
+            category: Category name (without "Category:" prefix)
+            limit: Maximum number of pages to return. If None, returns all pages.
+        """
         pages = []
         cmcontinue = None
         
@@ -78,6 +114,10 @@ class OSRSWikiScraper:
                 if 'query' in data and 'categorymembers' in data['query']:
                     for member in data['query']['categorymembers']:
                         pages.append(member['title'])
+                        
+                        # Check limit if specified
+                        if limit and len(pages) >= limit:
+                            return pages[:limit]
                 
                 if 'continue' in data and 'cmcontinue' in data['continue']:
                     cmcontinue = data['continue']['cmcontinue']
@@ -90,18 +130,19 @@ class OSRSWikiScraper:
                 logger.error(f"Error fetching category {category}: {e}")
                 break
         
-        return pages[:limit]
+        return pages
     
     def get_all_pages(self) -> List[str]:
         """Get all pages from configured categories."""
         all_pages = set()
         categories = self.config['wiki'].get('categories', [])
+        category_limit = self.config['wiki'].get('category_limit')  # Limit per category
         
         for category in categories:
             logger.info(f"Fetching pages from category: {category}")
-            pages = self.get_category_pages(category)
+            pages = self.get_category_pages(category, limit=category_limit)
             all_pages.update(pages)
-            logger.info(f"Found {len(pages)} pages in {category}")
+            logger.info(f"Found {len(pages)} pages in {category} (total so far: {len(all_pages)})")
             time.sleep(1)
         
         # Also get some popular pages and skill training guides
@@ -176,6 +217,9 @@ class OSRSWikiScraper:
         max_pages = self.config['wiki'].get('max_pages')
         if max_pages:
             all_pages = list(all_pages)[:max_pages]
+            logger.info(f"Limited to {max_pages} pages total")
+        else:
+            logger.info(f"Total pages collected: {len(all_pages)}")
         
         return list(all_pages)
     
@@ -390,7 +434,7 @@ class OSRSWikiScraper:
             
             if page_data:
                 # Save individual page
-                safe_title = page_title.replace('/', '_').replace('\\', '_')
+                safe_title = self.sanitize_filename(page_title)
                 output_file = self.output_dir / f"{safe_title}.json"
                 self.save_page_data(page_data, output_file)
                 

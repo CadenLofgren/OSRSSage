@@ -3,13 +3,25 @@
 # Data Collection
 wiki:
   base_url: "https://oldschool.runescape.wiki"
-  max_pages: 1000  # Set to None for all pages
+  max_pages: null  # Set to null/None to scrape ALL pages, or a number to limit total
+  category_limit: null  # Set to null/None for all pages per category, or a number to limit per category
   categories:
     - "Items"
     - "Quests"
     - "Skills"
     - "Monsters"
     - "Locations"
+    - "Bosses"
+    - "NPCs"
+    - "Minigames"
+    - "Equipment"
+    - "Weapons"
+    - "Armour"
+    - "Food"
+    - "Potions"
+    - "Achievement Diaries"
+    - "Combat"
+    - "Guides"
   output_dir: "data/raw"
 
 # Text Processing
