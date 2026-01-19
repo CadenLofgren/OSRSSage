@@ -26,8 +26,8 @@ wiki:
 
 # Text Processing
 processing:
-  chunk_size: 1000  # Characters per chunk
-  chunk_overlap: 200  # Overlap between chunks
+  chunk_size: 1500  # Characters per chunk
+  chunk_overlap: 300  # Overlap between chunks
   min_chunk_size: 100  # Minimum chunk size
   preserve_tables: true
   preserve_lists: true
@@ -41,15 +41,15 @@ vector_db:
 
 # RAG Settings
 rag:
-  top_k: 8  # Number of chunks to retrieve (increased for better coverage)
-  similarity_threshold: 0.2  # Minimum similarity score (lowered to get more relevant results)
-  max_context_length: 4000  # Max characters in context
+  top_k: 5  # Number of chunks to retrieve (increased for better coverage)
+  similarity_threshold: 0.5  # Minimum similarity score (lowered to get more relevant results)
+  max_context_length: 6000  # Max characters in context
 
 # LLM Settings
 llm:
   model: "qwen2.5:14b"
   base_url: "http://localhost:11434"
-  temperature: 0.7
+  temperature: 0.1
   max_tokens: 2000
   max_response_tokens: 1000  # Hard limit for response generation
   system_prompt: |
